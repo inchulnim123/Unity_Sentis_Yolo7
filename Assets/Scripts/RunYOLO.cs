@@ -54,18 +54,6 @@ public class RunYOLO : MonoBehaviour
 
     void Start()
     {
-        filePath = "Data/floatData.csv";
-
-        if (!Directory.Exists("Data"))
-        {
-            Directory.CreateDirectory("Data");
-        }
-
-        if (!File.Exists(filePath))
-        {
-            File.WriteAllText(filePath, "FloatValue\n");
-        }
-
         Application.targetFrameRate = 60;
 
         labels = labelsAsset.text.Split('\n');
@@ -85,8 +73,6 @@ public class RunYOLO : MonoBehaviour
     private void Update()
     {
         ExecuteML();
-
-        SaveFloatToCSVFile();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -151,22 +137,7 @@ public class RunYOLO : MonoBehaviour
     public void DrawBox(BoundingBox box, int id)
     {
         GameObject panel;
-
-        GameObject[] person = GameObject.FindGameObjectsWithTag("Person");
-
-        if (person.Length > 0)
-        {
-            float[] distance = new float[person.Length];
-
-            for (int i = 0; i < person.Length; i++)
-            {
-                distance[i] = Vector3.Distance(this.gameObject.transform.position, person[i].transform.position);
-
-                mindist = Mathf.Min(mindist, distance[i]);
-            }
-            print(mindist);
-        }
-
+        
         if (id < boxPool.Count)
         {
             panel = boxPool[id];
@@ -260,15 +231,5 @@ public class RunYOLO : MonoBehaviour
     private void OnDestroy()
     {
         engine?.Dispose();
-    }
-
-    void SaveFloatToCSVFile()
-    {
-        if (mindist < 40f)
-        {
-            string data = mindist.ToString("F2") + "\n";
-
-            File.AppendAllText(filePath, data);
-        }
     }
 }
