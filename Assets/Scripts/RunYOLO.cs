@@ -54,6 +54,18 @@ public class RunYOLO : MonoBehaviour
 
     void Start()
     {
+        filePath = "Data/floatData.csv";
+
+        if (!Directory.Exists("Data"))
+        {
+            Directory.CreateDirectory("Data");
+        }
+
+        if (!File.Exists(filePath))
+        {
+            File.WriteAllText(filePath, "FloatValue\n");
+        }
+
         Application.targetFrameRate = 60;
 
         labels = labelsAsset.text.Split('\n');
@@ -74,10 +86,12 @@ public class RunYOLO : MonoBehaviour
     {
         ExecuteML();
 
-        /*if (Input.GetKeyDown(KeyCode.Escape))
+        SaveFloatToCSVFile();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
-        }*/
+        }
     }
 
     public void ExecuteML()
@@ -189,6 +203,7 @@ public class RunYOLO : MonoBehaviour
 
         img.type = Image.Type.Sliced;
 
+        // ������ �θ� ���� (Canvas �Ǵ� Ư�� UI ���)
         Canvas canvas = FindObjectOfType<Canvas>();
 
         if (canvas != null)
@@ -202,7 +217,7 @@ public class RunYOLO : MonoBehaviour
             return null;
         }
 
-        
+        // �� �ؽ�Ʈ ���� �� ����
         var text = new GameObject("ObjectLabel");
 
         text.AddComponent<CanvasRenderer>();
@@ -246,5 +261,14 @@ public class RunYOLO : MonoBehaviour
     {
         engine?.Dispose();
     }
-    
+
+    void SaveFloatToCSVFile()
+    {
+        if (mindist < 40f)
+        {
+            string data = mindist.ToString("F2") + "\n";
+
+            File.AppendAllText(filePath, data);
+        }
+    }
 }
